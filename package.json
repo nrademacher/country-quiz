@@ -20,12 +20,15 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react-refresh": "latest",
-    "vite-plugin-windicss": "latest",
-    "vite": "latest"
+    "vite": "latest",
+    "vite-plugin-windicss": "latest"
   },
   "dependencies": {
+    "lodash.shuffle": "^4.2.0",
     "react": "latest",
     "react-dom": "latest",
+    "rxjs": "^7.0.1",
+    "tailwindcss": "^2.1.2",
     "windicss": "latest"
   },
   "browserslist": [
