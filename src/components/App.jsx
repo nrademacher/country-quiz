@@ -1,95 +1,110 @@
-import React, { useState, useEffect } from 'react';
-import { ajax } from 'rxjs/ajax';
-import { map } from 'rxjs/operators';
+import React, { useEffect, useState, useRef } from 'react';
+import generateQuizDeck from '../utils/generateQuizDeck';
 import shuffle from 'lodash.shuffle';
 
 const App = () => {
-	const [countries, setCountries] = useState([]);
+	const [quizQuestions, setQuizQuestions] = useState([]);
 	const [currentQuestion, setCurrentQuestion] = useState(0);
 	const [showScore, setShowScore] = useState(false);
 	const [score, setScore] = useState(0);
 
 	async function getCountries() {
-		const res = ajax('https://restcountries.eu/rest/v2/all').pipe(
-			map((e) => e.response)
-		);
-		res.subscribe((res) => {
-			setCountries(res);
-		});
+		const raw = await fetch('https://restcountries.eu/rest/v2/all');
+		const res = await raw.json();
+		return res;
 	}
 
-	useEffect(() => {
-		getCountries();
+	function initQuiz(countries) {
+		const typeCapital = {
+			name: 'capital',
+			countries: shuffle(countries).slice(0, 125),
+		};
+		const typeFlag = {
+			name: 'flag',
+			countries: shuffle(countries).slice(0, 125),
+		};
+		setQuizQuestions(generateQuizDeck([typeCapital, typeFlag], 5));
+	}
+
+	function restartQuiz() {
+		setCurrentQuestion(0);
+		setShowScore(false);
+		setScore(0);
+
+	}
+
+	useEffect(async () => {
+		const countries = await getCountries();
+		initQuiz(countries);
 	}, []);
 
-	const questions = shuffle(
-		countries.map((country) => {
-			const restCountries = countries.filter((c) => c.name !== country.name);
-			const answerOptions = [
-				{ answerText: country.name, isCorrect: true },
-			].concat(
-				Array(3)
-					.fill(1)
-					.map((_) => {
-						return {
-							answerText:
-								restCountries[Math.floor(Math.random() * restCountries.length)]
-									.name,
-							isCorrect: false,
-						};
-					})
-			);
-
-			return {
-				questionText: `${country.capital} is the capital of`,
-				answerOptions: shuffle(answerOptions),
-			};
-		})
-	);
-
-	const handleAnswerOptionClick = (isCorrect) => {
+	const handleAnswerOptionClick = (e, isCorrect) => {
 		if (isCorrect) {
 			setScore(score + 1);
+			e.target.classList.add('text-green-500');
+		} else {
+			e.target.classList.add('text-red-500');
 		}
 
-		const nextQuestion = currentQuestion + 1;
-		if (nextQuestion < questions.length) {
-			setCurrentQuestion(nextQuestion);
-		} else {
-			setShowScore(true);
+		if (isCorrect) {
+			const nextQuestion = currentQuestion + 1;
+			if (nextQuestion < quizQuestions.length) {
+				setTimeout(() => {
+					setCurrentQuestion(nextQuestion);
+					e.target.classList.remove('text-red-500', 'text-green-500');
+				}, 1000);
+			} else {
+				setShowScore(true);
+			}
 		}
 	};
+
+	const handleSkipButtonClick = () => {
+
+			const nextQuestion = currentQuestion + 1;
+			if (nextQuestion < quizQuestions.length) {
+					setCurrentQuestion(nextQuestion);
+			} else {
+				setShowScore(true);
+			}
+	}
 
 	return (
 		<div className="app">
 			{showScore ? (
 				<div className="score-section">
-					You scored {score} out of {questions.length}
+					You scored {score} out of {quizQuestions.length}
+					<button onClick={() => restartQuiz()}>Try again</button>
 				</div>
-			) : questions.length ? (
+			) : quizQuestions.length ? (
 				<>
 					<div className="question-section">
 						<div className="question-count">
-							<span>Question {currentQuestion + 1}</span>/{questions.length}
+							<span>Question {currentQuestion + 1}</span>/{quizQuestions.length}
 						</div>
 						<div className="question-text">
-							{questions[currentQuestion].questionText}
+							{quizQuestions[currentQuestion].questionText}
 						</div>
 					</div>
 					<div className="answer-section">
-						{questions[currentQuestion].answerOptions.map((answerOption) => (
-							<button
-								key={answerOption.answerText}
-								onClick={() => handleAnswerOptionClick(answerOption.isCorrect)}
-							>
-								{answerOption.answerText}
-							</button>
-						))}
+						{quizQuestions[currentQuestion].answerOptions.map(
+							(answerOption) => (
+								<button
+									key={answerOption.answerText}
+									onClick={(e) =>
+										handleAnswerOptionClick(e, answerOption.isCorrect)
+									}
+								>
+									{answerOption.answerText}
+								</button>
+							)
+						)}
 					</div>
+				<button onClick={handleSkipButtonClick}>next</button>
 				</>
 			) : null}
 		</div>
 	);
-}
+};
 
-export default App
+export default App;
