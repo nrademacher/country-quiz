@@ -1,4 +1,4 @@
-## Country Quiz
+## Country Quiz 🤔
 
 A simple quiz built with React, to test your knowledge of various countries.
 
