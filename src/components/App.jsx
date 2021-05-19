@@ -76,7 +76,7 @@ const App = () => {
 
 	return (
 		<div className="grid place-items-center min-h-screen text-indigo-900 bg-gradient-to-r from-indigo-500 to-indigo-700">
-		<main className="w-[90%] md:w-[30%] md:relative">
+		<main className="w-[90%] md:w-[60%] lg:w-[30%] md:relative">
 				<header
 		className={`flex justify-between items-center mb-4 md:mb-0 w-full md:absolute ${
 			!showScore ? 'md:-mt-20' : 'md:-mt-12'
