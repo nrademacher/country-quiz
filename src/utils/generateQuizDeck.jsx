@@ -14,7 +14,7 @@ function generateQuizDeck(subdecks, deckSize) {
       ].concat(
         Array(3)
           .fill(1)
-          .map((_) => {
+          .map((_, i) => {
             return {
               answerText:
                 restCountries[Math.floor(Math.random() * restCountries.length)]
@@ -28,8 +28,8 @@ function generateQuizDeck(subdecks, deckSize) {
         return {
           questionText: (
             <>
-              <img src={country.flag} className="w-[10%]" alt="country flag" />
-              is the flag of
+              <img src={country.flag} className="w-[25%] shadow-lg mb-3" alt="country flag" />
+              Which country does this flag belong to?
             </>
           ),
           answerOptions: shuffle(answerOptions),
