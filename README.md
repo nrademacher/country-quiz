@@ -1,11 +1,11 @@
-## Webdev Starter 🚀
+## Country Quiz
 
-This is a light-weight boilerplate for quickstarting a new web development project.
+A simple quiz built with React, to test your knowledge of various countries.
 
-Its aim is to be continuously optimized for speed, simplicity, and ease of use.
+### Features
 
-### Current setup
+* Two question types: Identify country flag or by capital
+* Ability to try again after picking one or more wrong answers
+* Display of final score with opportunity to play again
 
-* [Vite](https://github.com/vitejs/vite) as dev server/bundler, 
-* [React](https://github.com/facebook/react) as JS library, 
-* [Windi CSS](https://github.com/windicss/windicss) as styling solution
+API: [https://restcountries.eu/]()
